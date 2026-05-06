@@ -4,97 +4,712 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sycophant Loops | The Digital Archive</title>
+    <meta name="description" content="A permanent record of political transformation. No spin, just facts.">
     <style>
-        :root { --red: #ff3b3b; --bg: #0a0a0a; --card: #151515; }
-        body { background: var(--bg); color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; line-height: 1.6; }
-        
-        header { text-align: center; padding: 60px 20px; border-bottom: 1px solid #333; background: linear-gradient(to bottom, #111, var(--bg)); }
-        h1 { color: var(--red); font-size: clamp(2rem, 8vw, 4rem); text-transform: uppercase; margin: 0; letter-spacing: -2px; font-weight: 900; }
-        .subtitle { color: #888; text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem; margin-top: 10px; }
+        :root {
+            --red: #ff3b3b;
+            --bg: #0a0a0a;
+            --card: #151515;
+            --border: #222;
+            --text: #fff;
+            --muted: #888;
+        }
 
-        .archive-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; padding: 20px; max-width: 1400px; margin: 0 auto; }
-        .loop-card { background: var(--card); border: 1px solid #222; border-radius: 8px; overflow: hidden; transition: transform 0.2s; }
-        .loop-card:hover { border-color: var(--red); transform: translateY(-5px); }
-        
-        .video-container { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        
-        .info { padding: 15px; border-top: 1px solid #222; }
-        .name { font-weight: bold; font-size: 1.1rem; display: block; color: #eee; }
-        .quote { font-style: italic; color: #888; font-size: 0.9rem; margin-top: 5px; display: block; }
-        
-        .btn-merch { display: inline-block; margin-top: 15px; padding: 10px 20px; background: transparent; color: var(--red); border: 1px solid var(--red); text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 0.8rem; transition: 0.3s; }
-        .btn-merch:hover { background: var(--red); color: white; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        footer { padding: 80px 20px; text-align: center; color: #444; font-size: 0.8rem; border-top: 1px solid #222; margin-top: 50px; }
-        .legal { max-width: 700px; margin: 0 auto; line-height: 1.8; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        header {
+            text-align: center;
+            padding: 50px 20px 30px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(to bottom, #111, var(--bg));
+        }
+
+        h1 {
+            color: var(--red);
+            font-size: clamp(2rem, 8vw, 4rem);
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            font-weight: 900;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        .counter {
+            color: var(--muted);
+            font-size: 0.8rem;
+            margin-top: 15px;
+            letter-spacing: 1px;
+        }
+
+        .counter span {
+            color: var(--red);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        /* CAROUSEL CONTAINER */
+        .carousel-wrapper {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        /* CAROUSEL CARD */
+        .carousel-card {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .carousel-card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-bottom: none;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .card-info {
+            background: var(--card);
+            padding: 25px;
+            border-radius: 0 0 8px 8px;
+            border: 1px solid var(--border);
+            border-top: 2px solid var(--red);
+        }
+
+        .card-name {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .card-role {
+            font-size: 0.8rem;
+            color: var(--red);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .card-quote {
+            font-style: italic;
+            color: var(--muted);
+            font-size: 1.1rem;
+            line-height: 1.5;
+            border-left: 3px solid var(--red);
+            padding-left: 15px;
+            margin: 15px 0;
+        }
+
+        .card-context {
+            font-size: 0.8rem;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        /* NAVIGATION */
+        .carousel-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid var(--red);
+            color: var(--red);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            background: var(--red);
+            color: white;
+        }
+
+        .nav-indicator {
+            color: var(--muted);
+            font-size: 0.9rem;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .nav-indicator span {
+            color: var(--red);
+        }
+
+        /* DOT NAVIGATION */
+        .dot-nav {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: var(--red);
+            transform: scale(1.3);
+        }
+
+        .dot:hover {
+            background: var(--red);
+            opacity: 0.7;
+        }
+
+        /* AUTO-ADVANCE TOGGLE */
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .auto-toggle {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .auto-toggle.active {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .auto-toggle:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 60px 20px;
+            text-align: center;
+            color: #444;
+            font-size: 0.75rem;
+            border-top: 1px solid var(--border);
+            margin-top: 60px;
+            line-height: 1.8;
+        }
+
+        footer .notice-title {
+            color: var(--red);
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+        }
+
+        footer a {
+            color: var(--muted);
+        }
+
+        /* MOBILE */
+        @media (max-width: 600px) {
+            .carousel-wrapper {
+                padding: 0 10px;
+            }
+            .card-info {
+                padding: 18px;
+            }
+            .card-name {
+                font-size: 1.2rem;
+            }
+            .card-quote {
+                font-size: 1rem;
+            }
+            .nav-btn {
+                width: 44px;
+                height: 44px;
+            }
+        }
+
+        /* KEYBOARD HINT */
+        .keyboard-hint {
+            text-align: center;
+            color: #333;
+            font-size: 0.7rem;
+            margin-top: 15px;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
+    <header>
+        <h1>Sycophant Loops</h1>
+        <div class="subtitle">A permanent record of political transformation</div>
+        <div class="counter"><span id="total-count">14</span> documented transformations &mdash; No spin, just facts</div>
+    </header>
 
-<header>
-    <h1>SYCOPHANT LOOPS</h1>
-    <div class="subtitle">A Permanent Record of Political Transformation</div>
-</header>
+    <div class="carousel-wrapper">
+        <!-- CARD 1: J.D. Vance -->
+        <div class="carousel-card active" data-video="IuV8XMCsPmc" data-start="0" data-end="0">
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/IuV8XMCsPmc?playlist=IuV8XMCsPmc&loop=1&autoplay=0&mute=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-info">
+                <div class="card-name">J.D. Vance</div>
+                <div class="card-role">Now: Vice President of the United States</div>
+                <div class="card-quote">"I'm a Never-Trump guy. I never liked him."</div>
+                <div class="card-context">Charlie Rose interview, October 2016 &mdash; Before becoming Trump's VP pick in 2024</div>
+            </div>
+        </div>
 
-<main class="archive-grid">
-    <!-- JD VANCE -->
-    <article class="loop-card">
-        <div class="video-container">
-            <iframe src="[https://www.youtube.com/embed/fSAtXmP7N78?playlist=fSAtXmP7N78&loop=1&autoplay=1&mute=1&start=135&end=145](https://www.youtube.com/embed/fSAtXmP7N78?playlist=fSAtXmP7N78&loop=1&autoplay=1&mute=1&start=135&end=145)"></iframe>
+        <!-- CARD 2: Marco Rubio -->
+        <div class="carousel-card" data-video="TUD6Q9VAZ80" data-start="0" data-end="0">
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/TUD6Q9VAZ80?playlist=TUD6Q9VAZ80&loop=1&autoplay=0&mute=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-info">
+                <div class="card-name">Marco Rubio</div>
+                <div class="card-role">Now: Secretary of State</div>
+                <div class="card-quote">"A con artist is about to take over the Republican Party. Don't vote for a con artist."</div>
+                <div class="card-context">Campaign rally, February 2016 &mdash; Before becoming Trump's Secretary of State in 2025</div>
+            </div>
         </div>
-        <div class="info">
-            <span class="name">J.D. Vance (2016)</span>
-            <span class="quote">"I’m a never-Trump guy."</span>
-            <a href="#" class="btn-merch">COMING SOON</a>
-        </div>
-    </article>
 
-    <!-- MARCO RUBIO -->
-    <article class="loop-card">
-        <div class="video-container">
-            <iframe src="[https://www.youtube.com/embed/5U7zB8QY_7Y?playlist=5U7zB8QY_7Y&loop=1&autoplay=1&mute=1&start=10&end=18](https://www.youtube.com/embed/5U7zB8QY_7Y?playlist=5U7zB8QY_7Y&loop=1&autoplay=1&mute=1&start=10&end=18)"></iframe>
+        <!-- CARD 3: Lindsey Graham -->
+        <div class="carousel-card" data-video="2bkDykGhM8c" data-start="0" data-end="0">
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/2bkDykGhM8c?playlist=2bkDykGhM8c&loop=1&autoplay=0&mute=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-info">
+                <div class="card-name">Lindsey Graham</div>
+                <div class="card-role">Then: Senator, Trump Critic &rarr; Now: Loyal Trump Ally</div>
+                <div class="card-quote">"He's a race-baiting, xenophobic religious bigot. He doesn't represent my party."</div>
+                <div class="card-context">CNN interview, December 2015 &mdash; Before becoming one of Trump's most vocal defenders</div>
+            </div>
         </div>
-        <div class="info">
-            <span class="name">Marco Rubio (2016)</span>
-            <span class="quote">"The con artist."</span>
-            <a href="#" class="btn-merch">COMING SOON</a>
-        </div>
-    </article>
 
-    <!-- LINDSEY GRAHAM -->
-    <article class="loop-card">
-        <div class="video-container">
-            <iframe src="[https://www.youtube.com/embed/G6p9S_01LpY?playlist=G6p9S_01LpY&loop=1&autoplay=1&mute=1&start=5&end=13](https://www.youtube.com/embed/G6p9S_01LpY?playlist=G6p9S_01LpY&loop=1&autoplay=1&mute=1&start=5&end=13)"></iframe>
+        <!-- CARD 4: Ted Cruz -->
+        <div class="carousel-card" data-video="BxnkfE6Y5iI" data-start="0" data-end="0">
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/BxnkfE6Y5iI?playlist=BxnkfE6Y5iI&loop=1&autoplay=0&mute=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-info">
+                <div class="card-name">Ted Cruz</div>
+                <div class="card-role">Then: Primary Opponent &rarr; Now: Loyal Trump Ally</div>
+                <div class="card-quote">"This man is a pathological liar. He doesn't know the difference between truth and lies. He is utterly amoral."</div>
+                <div class="card-context">Press conference, May 2016 &mdash; Before endorsing Trump and becoming a staunch ally</div>
+            </div>
         </div>
-        <div class="info">
-            <span class="name">Lindsey Graham (2016)</span>
-            <span class="quote">"He's a race-baiting bigot."</span>
-            <a href="#" class="btn-merch">COMING SOON</a>
-        </div>
-    </article>
 
-    <!-- TED CRUZ -->
-    <article class="loop-card">
-        <div class="video-container">
-            <iframe src="[https://www.youtube.com/embed/m62E_5YpW9o?playlist=m62E_5YpW9o&loop=1&autoplay=1&mute=1&start=12&end=20](https://www.youtube.com/embed/m62E_5YpW9o?playlist=m62E_5YpW9o&loop=1&autoplay=1&mute=1&start=12&end=20)"></iframe>
+        <!-- CARD 5: Tucker Carlson -->
+        <div class="carousel-card" data-video="QGvEA9tWLGs" data-start="0" data-end="0">
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/QGvEA9tWLGs?playlist=QGvEA9tWLGs&loop=1&autoplay=0&mute=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-info">
+                <div class="card-name">Tucker Carlson</div>
+                <div class="card-role">Then: Trump's Biggest Media Ally &rarr; Now: "Tormented" by his support</div>
+                <div class="card-quote">"I'm sorry for misleading people... I will be tormented by this for a long time."</div>
+                <div class="card-context">Podcast statement, April 2026 &mdash; Previously called Trump "a demonic force, a destroyer" in private texts (2021)</div>
+            </div>
         </div>
-        <div class="info">
-            <span class="name">Ted Cruz (2016)</span>
-            <span class="quote">"A pathological liar."</span>
-            <a href="#" class="btn-merch">COMING SOON</a>
-        </div>
-    </article>
-</main>
 
-<footer>
-    <div class="legal">
-        <strong>FAIR USE ARCHIVE NOTICE:</strong><br>
-        This site is a non-commercial historical archive for research and educational purposes. All content is displayed via third-party YouTube embeds. Under Section 107 of the Copyright Act, use of copyrighted material for "criticism, comment, news reporting, teaching, scholarship, or research" is not an infringement of copyright. This site is not affiliated with any campaign.
+        <!-- CARD 6: Marjorie Taylor Greene -->
+        <div class="carousel-card" data-video="BOOsvy6lW8A" data-start="0" data-end="0">
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/BOOsvy6lW8A?playlist=BOOsvy6lW8A&loop=1&autoplay=0&mute=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-info">
+                <div class="card-name">Marjorie Taylor Greene</div>
+                <div class="card-role">Then: MAGA's Fiercest Warrior &rarr; Now: Calling for his removal</div>
+                <div class="card-quote">"He's out of control. I'm calling for the 25th Amendment."</div>
+                <div class="card-context">CNN interview, April 2026 &mdash; Previously one of Trump's most loyal defenders in Congress</div>
+            </div>
+        </div>
+
+        <!-- CARD 7: John Kelly -->
+        <div class="carousel-card" data-video="GQazdiCoBMw" data-start="0" data-end="0">
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/GQazdiCoBMw?playlist=GQazdiCoBMw&loop=1&autoplay=0&mute=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-info">
+                <div class="card-name">John Kelly</div>
+                <div class="card-role">Former White House Chief of Staff (2017-2019)</div>
+                <div class="card-quote">"He fits the general definition of a fascist. He prefers the dictator approach to governance."</div>
+                <div class="card-context">New York Times interview, October 2023 &mdash; Trump's longest-serving Chief of Staff breaks silence</div>
+            </div>
+        </div>
+
+        <!-- CARD 8: Rex Tillerson -->
+        <div class="carousel-card" data-video="P_xjQTwiQSk" data-start="0" data-end="0">
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/P_xjQTwiQSk?playlist=P_xjQTwiQSk&loop=1&autoplay=0&mute=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-info">
+                <div class="card-name">Rex Tillerson</div>
+                <div class="card-role">Former Secretary of State (2017-2018)</div>
+                <div class="card-quote">"He's a f***ing moron."</div>
+                <div class="card-context">Reported remark after Pentagon meeting, July 2017 &mdash; Fired by Trump via tweet in March 2018</div>
+            </div>
+        </div>
+
+        <!-- CARD 9: James Mattis -->
+        <div class="carousel-card" data-video="XnOgUuXIu20" data-start="0" data-end="0">
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/XnOgUuXIu20?playlist=XnOgUuXIu20&loop=1&autoplay=0&mute=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-info">
+                <div class="card-name">James Mattis</div>
+                <div class="card-role">Former Secretary of Defense (2017-2019)</div>
+                <div class="card-quote">"He is the first president in my lifetime who does not try to unite the American people. He tries to divide us."</div>
+                <div class="card-context">Public statement, June 2020 &mdash; The revered "Mad Dog" general breaks his silence on Trump</div>
+            </div>
+        </div>
+
+        <!-- CARD 10: Mitch McConnell -->
+        <div class="carousel-card" data-video="X-F1RQJETiQ" data-start="0" data-end="0">
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/X-F1RQJETiQ?playlist=X-F1RQJETiQ&loop=1&autoplay=0&mute=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-info">
+                <div class="card-name">Mitch McConnell</div>
+                <div class="card-role">Then: Senate Majority Leader &rarr; Condemned Trump &rarr; Then backed him again</div>
+                <div class="card-quote">"Trump is practically and morally responsible for provoking the events of the day."</div>
+                <div class="card-context">Senate floor speech, February 2021 &mdash; Said this, then voted to acquit, then endorsed him for 2024</div>
+            </div>
+        </div>
+
+        <!-- CARD 11: Kevin McCarthy -->
+        <div class="carousel-card" data-video="yw5TUmX6irY" data-start="0" data-end="0">
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/yw5TUmX6irY?playlist=yw5TUmX6irY&loop=1&autoplay=0&mute=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-info">
+                <div class="card-name">Kevin McCarthy</div>
+                <div class="card-role">Former House Speaker &mdash; Condemned Trump, then visited Mar-a-Lago</div>
+                <div class="card-quote">"The President bears responsibility for Wednesday's attack on Congress by mob rioters."</div>
+                <div class="card-context">House floor speech, January 13, 2021 &mdash; Two weeks later, he flew to Mar-a-Lago to make amends</div>
+            </div>
+        </div>
+
+        <!-- CARD 12: Nikki Haley -->
+        <div class="carousel-card" data-video="AG37klBbNK0" data-start="0" data-end="0">
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/AG37klBbNK0?playlist=AG37klBbNK0&loop=1&autoplay=0&mute=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-info">
+                <div class="card-name">Nikki Haley</div>
+                <div class="card-role">Former UN Ambassador &mdash; Ran against Trump, then endorsed him</div>
+                <div class="card-quote">"He's totally unhinged. He is not qualified to be President of the United States."</div>
+                <div class="card-context">Campaign rally, February 2024 &mdash; Months later, endorsed Trump and voted for him</div>
+            </div>
+        </div>
+
+        <!-- CARD 13: Bill Barr -->
+        <div class="carousel-card" data-video="P_fgVqw5Las" data-start="0" data-end="0">
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/P_fgVqw5Las?playlist=P_fgVqw5Las&loop=1&autoplay=0&mute=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-info">
+                <div class="card-name">Bill Barr</div>
+                <div class="card-role">Former Attorney General &mdash; Called Trump unfit, then endorsed him anyway</div>
+                <div class="card-quote">"He is a consummate narcissist who constantly engages in reckless conduct."</div>
+                <div class="card-context">CBS interview, June 2023 &mdash; Later said he'd still vote for Trump over Biden in 2024</div>
+            </div>
+        </div>
+
+        <!-- CARD 14: Mike Pence -->
+        <div class="carousel-card" data-video="6BuBxN0dwoM" data-start="0" data-end="0">
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/6BuBxN0dwoM?playlist=6BuBxN0dwoM&loop=1&autoplay=0&mute=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-info">
+                <div class="card-name">Mike Pence</div>
+                <div class="card-role">Former Vice President &mdash; Nearly killed by Trump's mob on Jan 6</div>
+                <div class="card-quote">"Trump should never be President of the United States again. Anyone who puts himself over the Constitution should never be President."</div>
+                <div class="card-context">CNN Town Hall, June 2023 &mdash; After the Jan 6 mob chanted "Hang Mike Pence"</div>
+            </div>
+        </div>
+
+        <!-- CARD 15: Candace Owens -->
+        <div class="carousel-card" data-video="ZIH5-V6UPkg" data-start="0" data-end="0">
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/ZIH5-V6UPkg?playlist=ZIH5-V6UPkg&loop=1&autoplay=0&mute=1&rel=0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-info">
+                <div class="card-name">Candace Owens</div>
+                <div class="card-role">Then: "Blexit" MAGA Queen &rarr; Now: Open Letter against Trump</div>
+                <div class="card-quote">"An Open Letter to President Donald Trump."</div>
+                <div class="card-context">Candace Owens podcast, April 2026 &mdash; Once Trump's most prominent Black conservative defender</div>
+            </div>
+        </div>
+
+        <!-- NAVIGATION -->
+        <div class="carousel-nav">
+            <button class="nav-btn" id="prev-btn" aria-label="Previous">&#9664;</button>
+            <div class="nav-indicator"><span id="current-num">1</span> / <span id="total-num">15</span></div>
+            <button class="nav-btn" id="next-btn" aria-label="Next">&#9654;</button>
+        </div>
+
+        <div class="dot-nav" id="dot-nav"></div>
+
+        <div class="controls">
+            <button class="auto-toggle" id="auto-toggle">Auto-Advance: OFF</button>
+        </div>
+
+        <div class="keyboard-hint">Use arrow keys &larr; &rarr; to navigate</div>
+    </div>
+
+    <footer>
+        <div class="notice-title">FAIR USE ARCHIVE NOTICE</div>
+        This site is a non-commercial historical archive for research and educational purposes.
+        All content is displayed via third-party YouTube embeds. Under Section 107 of the Copyright Act,
+        use of copyrighted material for "criticism, comment, news reporting, teaching, scholarship, or research"
+        is not an infringement of copyright. This site is not affiliated with any campaign or political party.
         <br><br>
         &copy; 2026 SycophantLoops.com
-    </div>
-</footer>
+    </footer>
 
+    <script>
+        // Carousel Logic
+        const cards = document.querySelectorAll('.carousel-card');
+        const totalCards = cards.length;
+        let currentIndex = 0;
+        let autoAdvance = false;
+        let autoTimer = null;
+
+        // Update counter
+        document.getElementById('total-count').textContent = totalCards;
+        document.getElementById('total-num').textContent = totalCards;
+
+        // Create dots
+        const dotNav = document.getElementById('dot-nav');
+        for (let i = 0; i < totalCards; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            dot.addEventListener('click', () => goTo(i));
+            dotNav.appendChild(dot);
+        }
+
+        function goTo(index) {
+            // Remove active from current
+            cards[currentIndex].classList.remove('active');
+            dotNav.children[currentIndex].classList.remove('active');
+
+            // Stop current video by resetting iframe src
+            const currentIframe = cards[currentIndex].querySelector('iframe');
+            if (currentIframe) {
+                const src = currentIframe.src;
+                currentIframe.src = '';
+                // Small delay before clearing helps prevent flicker
+            }
+
+            // Update index
+            currentIndex = index;
+            if (currentIndex >= totalCards) currentIndex = 0;
+            if (currentIndex < 0) currentIndex = totalCards - 1;
+
+            // Activate new card
+            cards[currentIndex].classList.add('active');
+            dotNav.children[currentIndex].classList.add('active');
+
+            // Load and play new video
+            const newIframe = cards[currentIndex].querySelector('iframe');
+            if (newIframe) {
+                const videoId = cards[currentIndex].dataset.video;
+                newIframe.src = `https://www.youtube.com/embed/${videoId}?playlist=${videoId}&loop=1&autoplay=1&mute=1&rel=0&modestbranding=1`;
+            }
+
+            // Update indicator
+            document.getElementById('current-num').textContent = currentIndex + 1;
+
+            // Reset auto-advance timer
+            if (autoAdvance) {
+                resetAutoTimer();
+            }
+        }
+
+        function next() {
+            goTo(currentIndex + 1);
+        }
+
+        function prev() {
+            goTo(currentIndex - 1);
+        }
+
+        // Button listeners
+        document.getElementById('next-btn').addEventListener('click', next);
+        document.getElementById('prev-btn').addEventListener('click', prev);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                next();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                prev();
+            }
+        });
+
+        // Touch/swipe support
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const wrapper = document.querySelector('.carousel-wrapper');
+
+        wrapper.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        wrapper.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) next();
+                else prev();
+            }
+        }, { passive: true });
+
+        // Auto-advance
+        const autoToggle = document.getElementById('auto-toggle');
+        autoToggle.addEventListener('click', () => {
+            autoAdvance = !autoAdvance;
+            autoToggle.textContent = `Auto-Advance: ${autoAdvance ? 'ON' : 'OFF'}`;
+            autoToggle.classList.toggle('active', autoAdvance);
+
+            if (autoAdvance) {
+                resetAutoTimer();
+            } else {
+                clearInterval(autoTimer);
+            }
+        });
+
+        function resetAutoTimer() {
+            clearInterval(autoTimer);
+            autoTimer = setInterval(next, 30000); // 30 seconds per card
+        }
+
+        // Initialize first card video (don't autoplay on load - let user initiate)
+        // Videos start muted and loop when navigated to
+    </script>
 </body>
 </html>
+
+Get Outlook for iOS
